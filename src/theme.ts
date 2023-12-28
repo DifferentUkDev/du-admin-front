@@ -37,7 +37,7 @@ const theme = extendTheme({
             letterSpacing: '-1%',
         },
         p: {
-            fontSize: ['16px', '22px'],
+            fontSize: ['14px', '18px'],
             fontWeight: 'regular',
             lineHeight: '110%',
             letterSpacing: '-1%',
@@ -75,6 +75,7 @@ const theme = extendTheme({
                 margin: 0,
                 padding: 0,
                 overflowX: 'hidden', // Убирает горизонтальный скролл
+                maxHeight: '100vh',
             },
         },
     },

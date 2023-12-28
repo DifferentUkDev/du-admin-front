@@ -1,36 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import MainLayout from "@/layouts/MainLayout/MainLayout";
-import { neVer, ver, verTasks } from "@/utils/blago";
+import { ver, verTasks } from "@/utils/voulontee";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
-interface IBlagoUsersPageProps {
+interface IVoulonteeUsersPageProps {
 
 }
 
-const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
+const VoulonteeUsersPage:FC<IVoulonteeUsersPageProps> = () => {
     const [buttonSelected, setButtonSelected] = useState<string>('')
     const [data, setData] = useState<any[]>()
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<{
-        id?: number, 
-        userId?: number, 
-        taskStatus?: string,
-        adults?: number, 
-        teens?: number, 
-        pensioners?: number, 
-        disabled?: number, 
-        pregnant?: number, 
-        description?: string, 
+        taskId?: number, 
+        userId?: number,  
         lastName?: string, 
         firstName?: string, 
         age?: number, 
-        family?: string, 
-        geo?: string, 
-        geoFrom?: string, 
-        arrivalDate?: string, 
-        status?: string,
+        geo?: string,
+        typeOfHelp?: string,
+        descriptionExperience?: string,
         email?: string, 
         tel?: string 
     }>({});
@@ -71,10 +62,8 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     }
 
     useEffect(() => {
-        if (buttonSelected === 'Верифицированные') {
+        if (buttonSelected === 'Волонтеры') {
             setData(ver)
-        } else if (buttonSelected === 'Неверефицированные') {
-            setData(neVer)
         } else if (buttonSelected === 'Заявки') {
             setData(verTasks)
         }
@@ -93,7 +82,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     return (
         <MainLayout>
             <Box mt={'2'} ml={'4'} mr={'4'}  w='100%'>
-                <Text as='h3' textStyle='h3'>Благополучатели</Text>
+                <Text as='h3' textStyle='h3'>Волонтеры</Text>
                 
                 <ButtonGroup mt='4'>
                     <Button 
@@ -101,23 +90,11 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                         borderColor='#1e88e5' 
                         color='#1e88e5' 
                         bg='white'
-                        onClick={() => setButtonSelected('Верифицированные')}
-                        isActive={buttonSelected === 'Верифицированные'}
+                        onClick={() => setButtonSelected('Волонтеры')}
+                        isActive={buttonSelected === 'Волонтеры'}
                         _active={{color: 'white', bg: '#1e88e5'}}
                     >
-                        Верифицированные
-                    </Button>
-
-                    <Button 
-                        borderWidth='1px' 
-                        borderColor='#1e88e5' 
-                        color='#1e88e5' 
-                        bg='white'
-                        onClick={() => setButtonSelected('Неверефицированные')}
-                        isActive={buttonSelected === 'Неверефицированные'}
-                        _active={{color: 'white', bg: '#1e88e5'}}
-                    >
-                        Неверефицированные
+                        Волонтеры
                     </Button>
 
                     <Button 
@@ -134,7 +111,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                 </ButtonGroup>
 
                 <VStack spacing={4}  w='100%' mt={4} maxH='72vh' overflowY='auto'>
-                    {buttonSelected === 'Верифицированные' && (
+                    {buttonSelected === 'Волонтеры' && (
                         <>
                             {data && data.map((item: any) => (
                                 <HStack 
@@ -152,7 +129,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                     onClick={() => handleItemClick(item)}
                                     cursor='pointer'
                                 >
-                                    <Text textStyle='p'>{item.id}</Text>
+                                    <Text textStyle='p'>{item.userId}</Text>
                                     <Text textStyle='p'>{item.email}</Text>
                                     <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
                                     <Text textStyle='p'>{item.tel}</Text>
@@ -161,33 +138,6 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                         </>
                     )}
                     
-                    {buttonSelected === 'Неверефицированные' && (
-                        <>
-                            {data && data.map((item: any) => (
-                                <HStack 
-                                    pt='2' 
-                                    pb='2' 
-                                    pl={4} 
-                                    pr={4} 
-                                    w='100%' 
-                                    display='flex' 
-                                    borderRadius='15px' 
-                                    alignItems='center' 
-                                    justifyContent='space-between' 
-                                    borderWidth='1px' 
-                                    borderColor='#1e88e5'
-                                    onClick={() => handleItemClick(item)}
-                                    cursor='pointer'
-                                >
-                                    <Text textStyle='p'>{item.id}</Text>
-                                    <Text textStyle='p'>{item.email}</Text>
-                                    <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
-                                    <Text textStyle='p'>{item.tel}</Text>
-                                </HStack>
-                            ))}
-                        </>
-                    )}
-
                     {buttonSelected === 'Заявки' && (
                         <>
                             {data && data.map((item: any) => (
@@ -206,10 +156,11 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                     onClick={() => handleItemClick(item)}
                                     cursor='pointer'
                                 >
-                                    <Text textStyle='p'>{item.id}</Text>
+                                    <Text textStyle='p'>{item.taskId}</Text>
                                     <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
                                     <Text textStyle='p'>{item.email}</Text>
-                                    <Text textStyle='p'>{item.taskStatus}</Text>
+                                    <Text textStyle='p'>{item.tel}</Text>
+                                    <Text textStyle='p'>{item.tel}</Text>
                                 </HStack>
                             ))}
                         </>
@@ -229,69 +180,35 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                             bg='transparent'
                         />
 
-                        {buttonSelected === 'Верифицированные' && (
+                        {buttonSelected === 'Волонтеры' && (
                             <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='55vh' overflowY='auto'>
-                                <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
                                 <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
                                 <Text textStyle='p'>фамилия: {selectedItem?.lastName}</Text>
                                 <Text textStyle='p'>имя: {selectedItem?.firstName}</Text>
                                 <Text textStyle='p'>возраст: {selectedItem?.age}</Text>
-                                <Text textStyle='p'>семейный статус: {selectedItem?.family}</Text>
                                 <Text textStyle='p'>адрес проживания: {selectedItem?.geo}</Text>
-                                <Text textStyle='p'>откуда приехал: {selectedItem?.geoFrom}</Text>
-                                <Text textStyle='p'>дата переезда: {selectedItem?.arrivalDate}</Text>
-                                <Text textStyle='p'>статус (в обществе): {selectedItem?.status}</Text>
                                 <Text textStyle='p'>почта: {selectedItem?.email}</Text>
                                 <Text textStyle='p'>телефон: {selectedItem?.tel}</Text>
-                                <Text textStyle='p'>кол-во взрослых в семье: {selectedItem?.adults}</Text>
-                                <Text textStyle='p'>кол-во инвалидов: {selectedItem?.disabled}</Text>
-                                <Text textStyle='p'>кол-во пенсионеров: {selectedItem?.pensioners}</Text>
-                                <Text textStyle='p'>кол-во беременных: {selectedItem?.pregnant}</Text>
-                                <Text textStyle='p'>кол-во до 18: {selectedItem?.teens}</Text>
-                                <Text textStyle='p'>описание ситуации: {selectedItem?.description}</Text>
-                            </VStack> 
-                        )}
-
-                        {buttonSelected === 'Неверефицированные' && (
-                            <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='55vh' overflowY='auto'>
-                                <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
-                                <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
-                                <Text textStyle='p'>фамилия: {selectedItem?.lastName}</Text>
-                                <Text textStyle='p'>имя: {selectedItem?.firstName}</Text>
-                                <Text textStyle='p'>возраст: {selectedItem?.age}</Text>
-                                <Text textStyle='p'>семейный статус: {selectedItem?.family}</Text>
-                                <Text textStyle='p'>адрес проживания: {selectedItem?.geo}</Text>
-                                <Text textStyle='p'>откуда приехал: {selectedItem?.geoFrom}</Text>
-                                <Text textStyle='p'>дата переезда: {selectedItem?.arrivalDate}</Text>
-                                <Text textStyle='p'>статус (в обществе): {selectedItem?.status}</Text>
                                 <Text textStyle='p'>почта: {selectedItem?.email}</Text>
-                                <Text textStyle='p'>телефон: {selectedItem?.tel}</Text>
+                                <Text textStyle='p'>вид помощи: {selectedItem?.typeOfHelp}</Text>
+                                <Text textStyle='p'>описание опыта: {selectedItem?.descriptionExperience}</Text>
                             </VStack> 
                         )}
 
                         {buttonSelected === 'Заявки' && (
                             <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='45vh' overflowY='auto'>
-                                <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
-                                <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
+                                <Text textStyle='h5'>Заявка</Text>
+                                
+                                <Text textStyle='p'>id заявки: {selectedItem?.taskId}</Text>
                                 <Text textStyle='p'>фамилия: {selectedItem?.lastName}</Text>
                                 <Text textStyle='p'>имя: {selectedItem?.firstName}</Text>
                                 <Text textStyle='p'>возраст: {selectedItem?.age}</Text>
-                                <Text textStyle='p'>семейный статус: {selectedItem?.family}</Text>
                                 <Text textStyle='p'>адрес проживания: {selectedItem?.geo}</Text>
-                                <Text textStyle='p'>откуда приехал: {selectedItem?.geoFrom}</Text>
-                                <Text textStyle='p'>дата переезда: {selectedItem?.arrivalDate}</Text>
-                                <Text textStyle='p'>статус (в обществе): {selectedItem?.status}</Text>
                                 <Text textStyle='p'>почта: {selectedItem?.email}</Text>
                                 <Text textStyle='p'>телефон: {selectedItem?.tel}</Text>
-                                
-                                <Text textStyle='h5'>Заявка</Text>
-
-                                <Text textStyle='p'>кол-во взрослых в семье: {selectedItem?.adults}</Text>
-                                <Text textStyle='p'>кол-во инвалидов: {selectedItem?.disabled}</Text>
-                                <Text textStyle='p'>кол-во пенсионеров: {selectedItem?.pensioners}</Text>
-                                <Text textStyle='p'>кол-во беременных: {selectedItem?.pregnant}</Text>
-                                <Text textStyle='p'>кол-во до 18: {selectedItem?.teens}</Text>
-                                <Text textStyle='p'>описание ситуации: {selectedItem?.description}</Text>
+                                <Text textStyle='p'>почта: {selectedItem?.email}</Text>
+                                <Text textStyle='p'>вид помощи: {selectedItem?.typeOfHelp}</Text>
+                                <Text textStyle='p'>описание опыта: {selectedItem?.descriptionExperience}</Text>
                             </VStack> 
                         )}
 
@@ -338,22 +255,6 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                 )}
                             </>
                         )}
-                        
-                        {/* Текст со статусом заявки */}
-                        {buttonSelected === 'Заявки' && (
-                            <>
-                                {!openDeni && (
-                                    <Text 
-                                        textStyle='p' 
-                                        position='absolute'
-                                        bottom={10}
-                                        right={8}
-                                    >
-                                        Статус заявки: {selectedItem?.taskStatus}
-                                    </Text>
-                                )}
-                            </>
-                        )}
                     </Box>
                 )}
             </Box>
@@ -362,4 +263,4 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     )
 }
 
-export default BlagoUsersPage;
+export default VoulonteeUsersPage;

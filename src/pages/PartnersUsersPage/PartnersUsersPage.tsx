@@ -1,38 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import MainLayout from "@/layouts/MainLayout/MainLayout";
-import { neVer, ver, verTasks } from "@/utils/blago";
+import { ver, verTasks } from "@/utils/partners";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
-interface IBlagoUsersPageProps {
+interface IPartnersUsersPageProps {
 
 }
 
-const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
+const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
     const [buttonSelected, setButtonSelected] = useState<string>('')
     const [data, setData] = useState<any[]>()
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<{
         id?: number, 
-        userId?: number, 
-        taskStatus?: string,
-        adults?: number, 
-        teens?: number, 
-        pensioners?: number, 
-        disabled?: number, 
-        pregnant?: number, 
-        description?: string, 
-        lastName?: string, 
-        firstName?: string, 
-        age?: number, 
-        family?: string, 
-        geo?: string, 
-        geoFrom?: string, 
-        arrivalDate?: string, 
-        status?: string,
-        email?: string, 
-        tel?: string 
+        fullName?: string, 
+        legalType?: string,
+        registrationDate?: string,
+        registrationCity?: string,
+        inn?: string,
+        kpp?: string,
+        ogrn?: string,
+        webSite?: string,
+        reportLink?: string,
+        description?: string,
+        contactFullName?: string,
+        contactPhone?: string,
+        contactEmail?: string,
+        helpTypeMask?: number,
+        comment?: string,
+        status?: number,
     }>({});
     const [commentTask, setCommentTask] = useState<string>('');
     const [openDeni, setOpenDeni] = useState<boolean>(false);
@@ -71,10 +69,8 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     }
 
     useEffect(() => {
-        if (buttonSelected === 'Верифицированные') {
+        if (buttonSelected === 'Партнеры') {
             setData(ver)
-        } else if (buttonSelected === 'Неверефицированные') {
-            setData(neVer)
         } else if (buttonSelected === 'Заявки') {
             setData(verTasks)
         }
@@ -92,8 +88,8 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     }, [data])
     return (
         <MainLayout>
-            <Box mt={'2'} ml={'4'} mr={'4'}  w='100%'>
-                <Text as='h3' textStyle='h3'>Благополучатели</Text>
+            <Box mt={'2'} ml={'4'} mr={'4'}  w='100%' >
+                <Text as='h3' textStyle='h3'>Партнеры</Text>
                 
                 <ButtonGroup mt='4'>
                     <Button 
@@ -101,23 +97,11 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                         borderColor='#1e88e5' 
                         color='#1e88e5' 
                         bg='white'
-                        onClick={() => setButtonSelected('Верифицированные')}
-                        isActive={buttonSelected === 'Верифицированные'}
+                        onClick={() => setButtonSelected('Партнеры')}
+                        isActive={buttonSelected === 'Партнеры'}
                         _active={{color: 'white', bg: '#1e88e5'}}
                     >
-                        Верифицированные
-                    </Button>
-
-                    <Button 
-                        borderWidth='1px' 
-                        borderColor='#1e88e5' 
-                        color='#1e88e5' 
-                        bg='white'
-                        onClick={() => setButtonSelected('Неверефицированные')}
-                        isActive={buttonSelected === 'Неверефицированные'}
-                        _active={{color: 'white', bg: '#1e88e5'}}
-                    >
-                        Неверефицированные
+                        Партнеры
                     </Button>
 
                     <Button 
@@ -134,7 +118,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                 </ButtonGroup>
 
                 <VStack spacing={4}  w='100%' mt={4} maxH='72vh' overflowY='auto'>
-                    {buttonSelected === 'Верифицированные' && (
+                    {buttonSelected === 'Партнеры' && (
                         <>
                             {data && data.map((item: any) => (
                                 <HStack 
@@ -153,41 +137,14 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                     cursor='pointer'
                                 >
                                     <Text textStyle='p'>{item.id}</Text>
-                                    <Text textStyle='p'>{item.email}</Text>
-                                    <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
-                                    <Text textStyle='p'>{item.tel}</Text>
+                                    <Text textStyle='p'>{item.legalType} {item.fullName}</Text>
+                                    <Text textStyle='p'>{item.contactEmail}</Text>
+                                    <Text textStyle='p'>{item.contactPhone}</Text>
                                 </HStack>
                             ))}
                         </>
                     )}
                     
-                    {buttonSelected === 'Неверефицированные' && (
-                        <>
-                            {data && data.map((item: any) => (
-                                <HStack 
-                                    pt='2' 
-                                    pb='2' 
-                                    pl={4} 
-                                    pr={4} 
-                                    w='100%' 
-                                    display='flex' 
-                                    borderRadius='15px' 
-                                    alignItems='center' 
-                                    justifyContent='space-between' 
-                                    borderWidth='1px' 
-                                    borderColor='#1e88e5'
-                                    onClick={() => handleItemClick(item)}
-                                    cursor='pointer'
-                                >
-                                    <Text textStyle='p'>{item.id}</Text>
-                                    <Text textStyle='p'>{item.email}</Text>
-                                    <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
-                                    <Text textStyle='p'>{item.tel}</Text>
-                                </HStack>
-                            ))}
-                        </>
-                    )}
-
                     {buttonSelected === 'Заявки' && (
                         <>
                             {data && data.map((item: any) => (
@@ -207,9 +164,10 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                     cursor='pointer'
                                 >
                                     <Text textStyle='p'>{item.id}</Text>
-                                    <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
-                                    <Text textStyle='p'>{item.email}</Text>
-                                    <Text textStyle='p'>{item.taskStatus}</Text>
+                                    <Text textStyle='p'>{item.legalType} {item.fullName}</Text>
+                                    <Text textStyle='p'>{item.contactEmail}</Text>
+                                    <Text textStyle='p'>{item.contactPhone}</Text>
+                                    <Text textStyle='p'>{item.status === 0 ? 'новая' : 'в работе'}</Text>
                                 </HStack>
                             ))}
                         </>
@@ -229,69 +187,45 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                             bg='transparent'
                         />
 
-                        {buttonSelected === 'Верифицированные' && (
+                        {buttonSelected === 'Партнеры' && (
                             <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='55vh' overflowY='auto'>
-                                <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
-                                <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
-                                <Text textStyle='p'>фамилия: {selectedItem?.lastName}</Text>
-                                <Text textStyle='p'>имя: {selectedItem?.firstName}</Text>
-                                <Text textStyle='p'>возраст: {selectedItem?.age}</Text>
-                                <Text textStyle='p'>семейный статус: {selectedItem?.family}</Text>
-                                <Text textStyle='p'>адрес проживания: {selectedItem?.geo}</Text>
-                                <Text textStyle='p'>откуда приехал: {selectedItem?.geoFrom}</Text>
-                                <Text textStyle='p'>дата переезда: {selectedItem?.arrivalDate}</Text>
-                                <Text textStyle='p'>статус (в обществе): {selectedItem?.status}</Text>
-                                <Text textStyle='p'>почта: {selectedItem?.email}</Text>
-                                <Text textStyle='p'>телефон: {selectedItem?.tel}</Text>
-                                <Text textStyle='p'>кол-во взрослых в семье: {selectedItem?.adults}</Text>
-                                <Text textStyle='p'>кол-во инвалидов: {selectedItem?.disabled}</Text>
-                                <Text textStyle='p'>кол-во пенсионеров: {selectedItem?.pensioners}</Text>
-                                <Text textStyle='p'>кол-во беременных: {selectedItem?.pregnant}</Text>
-                                <Text textStyle='p'>кол-во до 18: {selectedItem?.teens}</Text>
-                                <Text textStyle='p'>описание ситуации: {selectedItem?.description}</Text>
-                            </VStack> 
-                        )}
-
-                        {buttonSelected === 'Неверефицированные' && (
-                            <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='55vh' overflowY='auto'>
-                                <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
-                                <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
-                                <Text textStyle='p'>фамилия: {selectedItem?.lastName}</Text>
-                                <Text textStyle='p'>имя: {selectedItem?.firstName}</Text>
-                                <Text textStyle='p'>возраст: {selectedItem?.age}</Text>
-                                <Text textStyle='p'>семейный статус: {selectedItem?.family}</Text>
-                                <Text textStyle='p'>адрес проживания: {selectedItem?.geo}</Text>
-                                <Text textStyle='p'>откуда приехал: {selectedItem?.geoFrom}</Text>
-                                <Text textStyle='p'>дата переезда: {selectedItem?.arrivalDate}</Text>
-                                <Text textStyle='p'>статус (в обществе): {selectedItem?.status}</Text>
-                                <Text textStyle='p'>почта: {selectedItem?.email}</Text>
-                                <Text textStyle='p'>телефон: {selectedItem?.tel}</Text>
+                                <Text textStyle='p'>id пользователя: {selectedItem?.id}</Text>
+                                <Text textStyle='p'>Наименование: {selectedItem?.fullName}</Text>
+                                <Text textStyle='p'>Правовая форма: {selectedItem?.legalType}</Text>
+                                <Text textStyle='p'>Дата регистрации: {selectedItem?.registrationDate}</Text>
+                                <Text textStyle='p'>Город регистрации: {selectedItem?.registrationCity}</Text>
+                                <Text textStyle='p'>ИНН: {selectedItem?.inn}</Text>
+                                <Text textStyle='p'>КПП: {selectedItem?.kpp}</Text>
+                                <Text textStyle='p'>ОРГН: {selectedItem?.ogrn}</Text>
+                                <Text textStyle='p'>Веб-сайт: {selectedItem?.webSite}</Text>
+                                <Text textStyle='p'>Отчет в мин.юсе.: {selectedItem?.reportLink}</Text>
+                                <Text textStyle='p'>Описание работы: {selectedItem?.description}</Text>
+                                <Text textStyle='p'>Имя контактного лица: {selectedItem?.contactFullName}</Text>
+                                <Text textStyle='p'>Телефон к.л.: {selectedItem?.contactPhone}</Text>
+                                <Text textStyle='p'>Почта к.л.: {selectedItem?.contactEmail}</Text>
+                                <Text textStyle='p'>Маска типов помощи: {selectedItem?.helpTypeMask}</Text>
                             </VStack> 
                         )}
 
                         {buttonSelected === 'Заявки' && (
                             <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='45vh' overflowY='auto'>
-                                <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
-                                <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
-                                <Text textStyle='p'>фамилия: {selectedItem?.lastName}</Text>
-                                <Text textStyle='p'>имя: {selectedItem?.firstName}</Text>
-                                <Text textStyle='p'>возраст: {selectedItem?.age}</Text>
-                                <Text textStyle='p'>семейный статус: {selectedItem?.family}</Text>
-                                <Text textStyle='p'>адрес проживания: {selectedItem?.geo}</Text>
-                                <Text textStyle='p'>откуда приехал: {selectedItem?.geoFrom}</Text>
-                                <Text textStyle='p'>дата переезда: {selectedItem?.arrivalDate}</Text>
-                                <Text textStyle='p'>статус (в обществе): {selectedItem?.status}</Text>
-                                <Text textStyle='p'>почта: {selectedItem?.email}</Text>
-                                <Text textStyle='p'>телефон: {selectedItem?.tel}</Text>
-                                
                                 <Text textStyle='h5'>Заявка</Text>
-
-                                <Text textStyle='p'>кол-во взрослых в семье: {selectedItem?.adults}</Text>
-                                <Text textStyle='p'>кол-во инвалидов: {selectedItem?.disabled}</Text>
-                                <Text textStyle='p'>кол-во пенсионеров: {selectedItem?.pensioners}</Text>
-                                <Text textStyle='p'>кол-во беременных: {selectedItem?.pregnant}</Text>
-                                <Text textStyle='p'>кол-во до 18: {selectedItem?.teens}</Text>
-                                <Text textStyle='p'>описание ситуации: {selectedItem?.description}</Text>
+                                
+                                <Text textStyle='p'>id пользователя: {selectedItem?.id}</Text>
+                                <Text textStyle='p'>Наименование: {selectedItem?.fullName}</Text>
+                                <Text textStyle='p'>Правовая форма: {selectedItem?.legalType}</Text>
+                                <Text textStyle='p'>Дата регистрации: {selectedItem?.registrationDate}</Text>
+                                <Text textStyle='p'>Город регистрации: {selectedItem?.registrationCity}</Text>
+                                <Text textStyle='p'>ИНН: {selectedItem?.inn}</Text>
+                                <Text textStyle='p'>КПП: {selectedItem?.kpp}</Text>
+                                <Text textStyle='p'>ОРГН: {selectedItem?.ogrn}</Text>
+                                <Text textStyle='p'>Веб-сайт: {selectedItem?.webSite}</Text>
+                                <Text textStyle='p'>Отчет в мин.юсе.: {selectedItem?.reportLink}</Text>
+                                <Text textStyle='p'>Описание работы: {selectedItem?.description}</Text>
+                                <Text textStyle='p'>Имя контактного лица: {selectedItem?.contactFullName}</Text>
+                                <Text textStyle='p'>Телефон к.л.: {selectedItem?.contactPhone}</Text>
+                                <Text textStyle='p'>Почта к.л.: {selectedItem?.contactEmail}</Text>
+                                <Text textStyle='p'>Маска типов помощи: {selectedItem?.helpTypeMask}</Text>
                             </VStack> 
                         )}
 
@@ -338,7 +272,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                 )}
                             </>
                         )}
-                        
+
                         {/* Текст со статусом заявки */}
                         {buttonSelected === 'Заявки' && (
                             <>
@@ -349,7 +283,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                         bottom={10}
                                         right={8}
                                     >
-                                        Статус заявки: {selectedItem?.taskStatus}
+                                        Статус заявки: {selectedItem?.status === 0 ? 'новая' : 'в работе'}
                                     </Text>
                                 )}
                             </>
@@ -362,4 +296,4 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     )
 }
 
-export default BlagoUsersPage;
+export default PartnersUsersPage;

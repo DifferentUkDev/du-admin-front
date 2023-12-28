@@ -38,11 +38,11 @@ const Sidebar: FC<ISideBarProps> = ({isOpen}) => {
             Благополучатели
           </Button>
         </NavLink>
-        <NavLink to="/users/volountee">
+        <NavLink to="/users/voulontee">
           <Button
             leftIcon={<FaUserFriends />}
             justifyContent="left"
-            bg={isActive('/users/volountee') ? '#1e88e5' : 'transparent'}
+            bg={isActive('/users/voulontee') ? '#1e88e5' : 'transparent'}
             _hover={{ bg: '#1e88e5', color: 'white' }}
             w='100%'
           >
