@@ -16,6 +16,8 @@ import { FC, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from "@/api/auth";
+import Cookies from 'js-cookie';
 
 interface ILoginPageProps {
 
@@ -43,11 +45,28 @@ const LoginPage:FC<ILoginPageProps> = () => {
     const onSubmit: SubmitHandler<IFormInput> = async (values) => {
         setIsLoading(true); // Включаем индикатор загрузки
     
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
+        const response = await loginUser(values.email, values.password)
         
-        alert(JSON.stringify(values));
+        console.log('resp', response)
 
-        navigate('/home');
+        if (response.status === 200) {
+            console.log('resp', response.data)
+
+            Cookies.remove('email');
+            Cookies.remove('userRole');
+            Cookies.remove('userType');
+            Cookies.remove('token');
+
+            Cookies.set('email', values.email, {expires: 5});
+            Cookies.set('userRole', response.data.userRole, {expires: 5});
+            Cookies.set('userType', response.data.userType, {expires: 5});
+            Cookies.set('token', response.data.token, {expires: 5});
+
+            navigate('/home');
+        }
+
+       
         
         setIsLoading(false); // Выключаем индикатор загрузки после завершения асинхронной операции
       };
@@ -56,6 +75,7 @@ const LoginPage:FC<ILoginPageProps> = () => {
         if (isLoading) console.log('isLoading', isLoading);
         else console.log('isLoading', isLoading);
     }, [isLoading])
+
     return (
         <Box display='flex' w='100%' flexDirection='column' alignItems='center'>
             <Box h='50px' bg='white' borderWidth='1px' w='100%' display='flex' justifyContent='center' alignItems='center'>
@@ -90,7 +110,7 @@ const LoginPage:FC<ILoginPageProps> = () => {
                             {...register('password', {
                             required: 'Password is required',
                             minLength: {
-                                value: 6,
+                                value: 4,
                                 message: 'Password must be at least 6 characters',
                             },
                             })}

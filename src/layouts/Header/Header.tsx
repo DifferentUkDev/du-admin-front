@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { HamburgerIcon, BellIcon } from '@chakra-ui/icons';
 import { NavLink } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 interface IHeaderProps {
     onToggle: any;
@@ -20,9 +21,12 @@ interface IHeaderProps {
 }
 
 const Header:FC<IHeaderProps> = ({onToggle, isOpen}) => {
-    const [userStatus, setUserStatus] = useState('Online');
+    const [userStatus, setUserStatus] = useState('онлайн');
     
     console.log(isOpen)
+
+    const userEmail = Cookies.get('email')
+    const userRole = Cookies.get('userRole')
 
     return (
         <Flex justify="space-between" align="center" p="4" bg="headerBgColor" color="headerTextColor">
@@ -53,22 +57,20 @@ const Header:FC<IHeaderProps> = ({onToggle, isOpen}) => {
                     <Popover trigger="click" closeOnBlur={false}>
                         <PopoverTrigger>
                             <Avatar size='md' cursor='pointer' name='Имя Пользователя'>
-                                <AvatarBadge boxSize='1em' bg={userStatus === 'Online' ? 'green.500' : 'tomato'} />
+                                <AvatarBadge boxSize='1em' bg={userStatus === 'онлайн' ? 'green.500' : 'tomato'} />
                             </Avatar>
                         </PopoverTrigger>
                         <PopoverContent p="4">
-                            <Text>Email: user@example.com</Text>
-                            <Text>Имя: Имя пользователя</Text>
-                            <Text>Роль: Админ</Text>
+                            <Text>Email: {userEmail}</Text>
+                            <Text>Роль: {userRole === '5' ? 'Админ' : 'какой-то чел'}</Text>
                             <Text>Статус:
                                 <select
                                     value={userStatus}
                                     onChange={(e) => setUserStatus(e.target.value)}
                                     style={{ marginLeft: '8px' }}
                                 >
-                                    <option value="Online">Online</option>
-                                    <option value="Away">Away</option>
-                                    <option value="Busy">Busy</option>
+                                    <option value="онлайн">онлайн</option>
+                                    <option value="отошел">отошел</option>
                                 </select>
                             </Text>
                         </PopoverContent>

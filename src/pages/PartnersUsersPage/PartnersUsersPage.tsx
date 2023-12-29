@@ -63,6 +63,8 @@ const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
+        alert('Пароль отправлен! Заявка принята!')
+
         setIsloading(false);
 
         setIsPopupOpen(false);

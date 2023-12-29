@@ -1,15 +1,24 @@
 import HomePage from '@pages/HomePage/HomePage';
 import HrefPage from '@pages/HrefPage/HrefPage';
 import LoginPage from '@pages/LoginPage/LoginPage';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import BlagoUsersPage from './pages/BlagoUsersPage/BlagoUsersPage';
 import VoulonteeUsersPage from './pages/VoulonteeUsersPage/VoulonteeUsersPage';
 import PartnersUsersPage from './pages/PartnersUsersPage/PartnersUsersPage';
+import { useEffect } from 'react';
 
 const App = () => {
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) {
+      // Если токена нет, перенаправляем пользователя на страницу входа
+      navigate('/login');
+    }
+  }, [navigate]);
   return (
-    <Router>
       <Routes>
         <Route path='/login' element={<LoginPage />} />
         <Route path='/' element={<HrefPage />} />
@@ -18,7 +27,6 @@ const App = () => {
         <Route path='users/voulontee' element={<VoulonteeUsersPage />} />
         <Route path='users/partners' element={<PartnersUsersPage />} />
       </Routes>
-    </Router>
   )
 }
 

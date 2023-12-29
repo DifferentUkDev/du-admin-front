@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getBeneficiaries } from "@/api/getUsers";
 import MainLayout from "@/layouts/MainLayout/MainLayout";
 import { neVer, ver, verTasks } from "@/utils/blago";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { getBeneficiaryVerificationAttempts } from "@/api/getTasks";
 
 interface IBlagoUsersPageProps {
 
@@ -37,12 +40,35 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     const [commentTask, setCommentTask] = useState<string>('');
     const [openDeni, setOpenDeni] = useState<boolean>(false);
     const [isLoading, setIsloading] = useState<boolean>(false);
+    const [blagoTaskFromBack, setBlagoTaskFromBack] = useState<any[]>()
+    
+    const token = Cookies.get('token')
+    
+    const getBeneficiariesFromBack = async () => {
+        console.log(token)
+        const resp = await getBeneficiaries(false, token)
+        
+        if (resp.status === 200) {
+            console.log(resp.data)
+        }
+    }
 
+    const getBeneficiaryVerificationAttemptsFromBack = async () => {
+        const resp = await getBeneficiaryVerificationAttempts(token)
+
+        if (resp.status === 200) {
+            console.log('РЕСПОНС',resp.data)
+            setBlagoTaskFromBack(resp.data)
+        }
+    }
+
+    // открытие попапа
     const handleItemClick = (item: any) => {
         setSelectedItem(item);
         setIsPopupOpen(true);
     };
 
+    // отклонение заявки
     const handleDeniTask = async () => {
         if (commentTask.length > 0 ) {
             setIsloading(true);
@@ -60,6 +86,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
         
     }
 
+    // принятие заявки
     const acceptTask = async () => {
         setIsloading(true);
 
@@ -70,16 +97,20 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
         setIsPopupOpen(false);
     }
 
+    // действие по нажатию на табы
     useEffect(() => {
         if (buttonSelected === 'Верифицированные') {
             setData(ver)
+            getBeneficiariesFromBack()
         } else if (buttonSelected === 'Неверефицированные') {
             setData(neVer)
         } else if (buttonSelected === 'Заявки') {
             setData(verTasks)
+            getBeneficiaryVerificationAttemptsFromBack()
         }
     }, [buttonSelected])
 
+    // проверка на открытость попапа и скрытие и отчистка полей внутри него
     useEffect(() => {
         if (!isPopupOpen) {
             setOpenDeni(false);
@@ -87,9 +118,14 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
         }
     }, [isPopupOpen])
 
+    // дебаг
     useEffect(() => {
         console.log('данные', data)
     }, [data])
+
+    // useEffect(() => {
+    //     console.log('Пришло с бека', stateForResp)
+    // }, [stateForResp])
     return (
         <MainLayout>
             <Box mt={'2'} ml={'4'} mr={'4'}  w='100%'>
@@ -163,7 +199,30 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                     
                     {buttonSelected === 'Неверефицированные' && (
                         <>
-                            {data && data.map((item: any) => (
+                            {/* {data && data.map((item: any) => (
+                                <HStack 
+                                    pt='2' 
+                                    pb='2' 
+                                    pl={4} 
+                                    pr={4} 
+                                    w='100%' 
+                                    display='flex' 
+                                    borderRadius='15px' 
+                                    alignItems='center' 
+                                    justifyContent='space-between' 
+                                    borderWidth='1px' 
+                                    borderColor='#1e88e5'
+                                    onClick={() => handleItemClick(item)}
+                                    cursor='pointer'
+                                >
+                                    <Text textStyle='p'>{item.id}</Text>
+                                    <Text textStyle='p'>{item.email}</Text>
+                                    <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
+                                    <Text textStyle='p'>{item.tel}</Text>
+                                </HStack>
+                            ))} */}
+
+                            {blagoTaskFromBack && blagoTaskFromBack.map((item: any) => (
                                 <HStack 
                                     pt='2' 
                                     pb='2' 

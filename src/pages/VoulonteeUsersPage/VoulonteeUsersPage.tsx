@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getVolunteerVerificationAttempts } from "@/api/getTasks";
 import MainLayout from "@/layouts/MainLayout/MainLayout";
 import { ver, verTasks } from "@/utils/voulontee";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 interface IVoulonteeUsersPageProps {
 
@@ -28,7 +30,9 @@ const VoulonteeUsersPage:FC<IVoulonteeUsersPageProps> = () => {
     const [commentTask, setCommentTask] = useState<string>('');
     const [openDeni, setOpenDeni] = useState<boolean>(false);
     const [isLoading, setIsloading] = useState<boolean>(false);
-
+    
+    const token = Cookies.get('token')
+    
     const handleItemClick = (item: any) => {
         setSelectedItem(item);
         setIsPopupOpen(true);
@@ -51,6 +55,15 @@ const VoulonteeUsersPage:FC<IVoulonteeUsersPageProps> = () => {
         
     }
 
+    const getVolunteerVerificationAttemptsFromBack = async () => {
+        const resp = await getVolunteerVerificationAttempts(token)
+
+        if (resp.status === 200) {
+            console.log('Респонс волонтеров', resp.data)
+        }
+        
+    }
+
     const acceptTask = async () => {
         setIsloading(true);
 
@@ -66,6 +79,7 @@ const VoulonteeUsersPage:FC<IVoulonteeUsersPageProps> = () => {
             setData(ver)
         } else if (buttonSelected === 'Заявки') {
             setData(verTasks)
+            getVolunteerVerificationAttemptsFromBack()
         }
     }, [buttonSelected])
 
