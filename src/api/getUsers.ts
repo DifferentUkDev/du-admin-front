@@ -5,10 +5,12 @@ export const getBeneficiaries = (isVerified: boolean, token: string | undefined)
     return api.post('/Auth/Beneficiaries', (isVerified)).then((resp) => resp.data)
 }
 
-export const getVolunteers = () => {
-    api.get('/Auth/Volunteerss').then((resp) => resp.data)
+export const getVolunteers = (token: string | undefined) => {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    return api.get('/Auth/Volunteers').then((resp) => resp)
 }
 
-export const getPartners = () => {
-    api.get('/Auth/Partners').then((resp) => resp.data)
+export const getPartners = (token: string | undefined) => {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    return api.get('/Auth/Partners').then((resp) => resp)
 }

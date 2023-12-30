@@ -42,6 +42,8 @@ const LoginPage:FC<ILoginPageProps> = () => {
         formState: { errors },
     } = useForm<IFormInput>();
 
+    const fiveMinutes = 5 / (24 * 60);
+
     const onSubmit: SubmitHandler<IFormInput> = async (values) => {
         setIsLoading(true); // Включаем индикатор загрузки
     
@@ -58,10 +60,10 @@ const LoginPage:FC<ILoginPageProps> = () => {
             Cookies.remove('userType');
             Cookies.remove('token');
 
-            Cookies.set('email', values.email, {expires: 5});
-            Cookies.set('userRole', response.data.userRole, {expires: 5});
-            Cookies.set('userType', response.data.userType, {expires: 5});
-            Cookies.set('token', response.data.token, {expires: 5});
+            Cookies.set('email', values.email, {expires: fiveMinutes});
+            Cookies.set('userRole', response.data.userRole, {expires: fiveMinutes});
+            Cookies.set('userType', response.data.userType, {expires: fiveMinutes});
+            Cookies.set('token', response.data.token, {expires: fiveMinutes});
 
             navigate('/home');
         }

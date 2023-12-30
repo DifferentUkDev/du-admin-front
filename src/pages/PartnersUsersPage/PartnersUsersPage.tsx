@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import MainLayout from "@/layouts/MainLayout/MainLayout";
-import { ver, verTasks } from "@/utils/partners";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { approvePartnerVerificationAttempt, rejectPartnerVerificationAttempt } from "@/api/partnerTask";
+import { getPartnerVerificationAttempts } from "@/api/getTasks";
+import { getPartners } from "@/api/getUsers";
 
 interface IPartnersUsersPageProps {
 
@@ -14,7 +17,7 @@ const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
     const [data, setData] = useState<any[]>()
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<{
-        id?: number, 
+        id: number, 
         fullName?: string, 
         legalType?: string,
         registrationDate?: string,
@@ -27,27 +30,61 @@ const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
         description?: string,
         contactFullName?: string,
         contactPhone?: string,
-        contactEmail?: string,
+        contactEmail: string,
         helpTypeMask?: number,
         comment?: string,
         status?: number,
-    }>({});
+    }>({id: 0, contactEmail: ''});
     const [commentTask, setCommentTask] = useState<string>('');
     const [openDeni, setOpenDeni] = useState<boolean>(false);
     const [isLoading, setIsloading] = useState<boolean>(false);
+    
+    const token = Cookies.get('token')
+    
+    // принятие отклонение заявок
+    const approveAttemtBack = async (id: number) => {
+        const resp = await approvePartnerVerificationAttempt(token, id)
+
+        console.log('APPROVE',resp)
+    }
+
+    const rejectAttemtBack = async (email: string) => {
+        const resp = await rejectPartnerVerificationAttempt(token, email, commentTask)
+
+        console.log('REGECT', resp)
+    }
+
+    const getPartnerVerificationAttemptsFromBack = async () => {
+        const resp = await getPartnerVerificationAttempts(token)
+
+        if (resp.status === 200) {
+            console.log('Респонс волонтеров', resp.data)
+            setData(resp.data)
+        }  
+    }
+
+    const getPartnersFromBack = async () => {
+        const resp = await getPartners(token)
+
+        if (resp.status === 200) {
+            console.log('ВОЛОНТЕРЫ',resp.data)
+            setData(resp.data)
+        }
+        
+    }
 
     const handleItemClick = (item: any) => {
         setSelectedItem(item);
         setIsPopupOpen(true);
     };
 
-    const handleDeniTask = async () => {
+    const handleDeniTask = async (email:string) => {
         if (commentTask.length > 0 ) {
             setIsloading(true);
 
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await rejectAttemtBack(email)
             
-            console.log('комментарий отправлен', commentTask)
+            alert(`заявка отклонена, письмо отправлено на почту! почта: ${email}`)
             
             setIsloading(false);
 
@@ -58,12 +95,12 @@ const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
         
     }
 
-    const acceptTask = async () => {
+    const acceptTask = async (id: number) => {
         setIsloading(true);
 
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await approveAttemtBack(id)
 
-        alert('Пароль отправлен! Заявка принята!')
+        alert(`заявка принята, но осталась в списке, потому что бек так решил! id заявки: ${id}`)
 
         setIsloading(false);
 
@@ -72,9 +109,9 @@ const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
 
     useEffect(() => {
         if (buttonSelected === 'Партнеры') {
-            setData(ver)
+            getPartnersFromBack()
         } else if (buttonSelected === 'Заявки') {
-            setData(verTasks)
+            getPartnerVerificationAttemptsFromBack()
         }
     }, [buttonSelected])
 
@@ -250,7 +287,7 @@ const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
                                                 bottom={10}
                                                 left={8}
                                             >
-                                                <Button bg='green.500' color='white' onClick={() => acceptTask()}>Принять</Button>
+                                                <Button bg='green.500' color='white' onClick={() => acceptTask(selectedItem.id)}>Принять</Button>
                                                 <Button bg='tomato' color='white'  onClick={() => setOpenDeni(true)}>Отклонить</Button>
                                             </ButtonGroup>
                                         ) : (
@@ -262,7 +299,7 @@ const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
                                                 w='100%'
                                             >
                                                 <Input placeholder="Введите комментарий" onChange={(e) => setCommentTask(e.target.value)} value={commentTask} />
-                                                <Button bg='tomato' color='white' onClick={() => handleDeniTask()}>Отправить</Button>
+                                                <Button bg='tomato' color='white' onClick={() => handleDeniTask(selectedItem.contactEmail)}>Отправить</Button>
                                                 <IconButton
                                                     aria-label="Очистить"
                                                     icon={<CloseIcon />}
