@@ -2,7 +2,8 @@ import { api } from "./const";
 
 export const getBeneficiaries = (isVerified: boolean, token: string | undefined) => {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    return api.post('/Auth/Beneficiaries', (isVerified)).then((resp) => resp.data)
+    api.defaults.headers.post['Content-Type'] = 'application/json';
+    return api.post('/Auth/Beneficiaries', isVerified.toString() ).then((resp) => resp)
 }
 
 export const getVolunteers = (token: string | undefined) => {

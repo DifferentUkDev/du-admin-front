@@ -17,48 +17,56 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     const [data, setData] = useState<any[]>()
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<{
-        id?: number, 
-        userId?: number, 
-        taskStatus?: string,
-        adults?: number, 
-        teens?: number, 
-        pensioners?: number, 
-        disabled?: number, 
-        pregnant?: number, 
-        description?: string, 
-        lastName?: string, 
-        firstName?: string, 
-        age?: number, 
-        family?: string, 
-        geo?: string, 
-        geoFrom?: string, 
-        arrivalDate?: string, 
-        status?: string,
-        email?: string, 
-        tel?: string 
+        age?: number,
+        createdAt?: string,
+        dateOfDeparture?: string,
+        description?: string,
+        email?: string,
+        firstName?: string,
+        geo?: string,
+        geoFrom?: string,
+        isVerified?: string,
+        lastLoginAt?: string,
+        lastName?: string,
+        lastUpdatedAt?: string,
+        maritalStatus?: number,
+        numberOfAdults?: number,
+        numberOfChildren?: number,
+        numberOfDisabled?: number,
+        numberOfOld?: number,
+        numberOfPregnant?: number,
+        phone?: string,
+        socialStatus?: number,
+        verifiedPic?: string,
     }>({});
     const [commentTask, setCommentTask] = useState<string>('');
     const [openDeni, setOpenDeni] = useState<boolean>(false);
     const [isLoading, setIsloading] = useState<boolean>(false);
-    const [blagoTaskFromBack, setBlagoTaskFromBack] = useState<any[]>()
     
     const token = Cookies.get('token')
     
-    const getBeneficiariesFromBack = async () => {
+    const getBeneficiariesFromBack = async (data: boolean) => {
         console.log(token)
-        const resp = await getBeneficiaries(false, token)
+        const resp = await getBeneficiaries(data, token)
+        
+        console.log(resp)
         
         if (resp.status === 200) {
             console.log(resp.data)
+
+            setData(resp.data)
         }
     }
 
     const getBeneficiaryVerificationAttemptsFromBack = async () => {
         const resp = await getBeneficiaryVerificationAttempts(token)
-
+        
+        console.log('РЕСПОНС',resp)
+        
         if (resp.status === 200) {
             console.log('РЕСПОНС',resp.data)
-            setBlagoTaskFromBack(resp.data)
+            // setBlagoTaskFromBack(resp.data)
+
         }
     }
 
@@ -101,9 +109,10 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     useEffect(() => {
         if (buttonSelected === 'Верифицированные') {
             setData(ver)
-            getBeneficiariesFromBack()
+            getBeneficiariesFromBack(true)
         } else if (buttonSelected === 'Неверефицированные') {
             setData(neVer)
+            getBeneficiariesFromBack(false)
         } else if (buttonSelected === 'Заявки') {
             setData(verTasks)
             getBeneficiaryVerificationAttemptsFromBack()
@@ -188,10 +197,10 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                     onClick={() => handleItemClick(item)}
                                     cursor='pointer'
                                 >
-                                    <Text textStyle='p'>{item.id}</Text>
                                     <Text textStyle='p'>{item.email}</Text>
                                     <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
-                                    <Text textStyle='p'>{item.tel}</Text>
+                                    <Text textStyle='p'>{item.phone}</Text>
+                                    <Text textStyle='p'>{item.isVerified ? 'Верифицирован' : 'Неверифицирован'}</Text>
                                 </HStack>
                             ))}
                         </>
@@ -199,30 +208,8 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                     
                     {buttonSelected === 'Неверефицированные' && (
                         <>
-                            {/* {data && data.map((item: any) => (
-                                <HStack 
-                                    pt='2' 
-                                    pb='2' 
-                                    pl={4} 
-                                    pr={4} 
-                                    w='100%' 
-                                    display='flex' 
-                                    borderRadius='15px' 
-                                    alignItems='center' 
-                                    justifyContent='space-between' 
-                                    borderWidth='1px' 
-                                    borderColor='#1e88e5'
-                                    onClick={() => handleItemClick(item)}
-                                    cursor='pointer'
-                                >
-                                    <Text textStyle='p'>{item.id}</Text>
-                                    <Text textStyle='p'>{item.email}</Text>
-                                    <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
-                                    <Text textStyle='p'>{item.tel}</Text>
-                                </HStack>
-                            ))} */}
 
-                            {blagoTaskFromBack && blagoTaskFromBack.map((item: any) => (
+                            {data && data.map((item: any) => (
                                 <HStack 
                                     pt='2' 
                                     pb='2' 
@@ -238,10 +225,10 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                     onClick={() => handleItemClick(item)}
                                     cursor='pointer'
                                 >
-                                    <Text textStyle='p'>{item.id}</Text>
                                     <Text textStyle='p'>{item.email}</Text>
                                     <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
-                                    <Text textStyle='p'>{item.tel}</Text>
+                                    <Text textStyle='p'>{item.phone}</Text>
+                                    <Text textStyle='p'>{item.isVerified ? 'Верифицирован' : 'Неверифицирован'}</Text>
                                 </HStack>
                             ))}
                         </>
@@ -290,45 +277,41 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
 
                         {buttonSelected === 'Верифицированные' && (
                             <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='55vh' overflowY='auto'>
-                                <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
-                                <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
                                 <Text textStyle='p'>фамилия: {selectedItem?.lastName}</Text>
                                 <Text textStyle='p'>имя: {selectedItem?.firstName}</Text>
                                 <Text textStyle='p'>возраст: {selectedItem?.age}</Text>
-                                <Text textStyle='p'>семейный статус: {selectedItem?.family}</Text>
+                                <Text textStyle='p'>семейный статус: {selectedItem?.maritalStatus}</Text>
                                 <Text textStyle='p'>адрес проживания: {selectedItem?.geo}</Text>
                                 <Text textStyle='p'>откуда приехал: {selectedItem?.geoFrom}</Text>
-                                <Text textStyle='p'>дата переезда: {selectedItem?.arrivalDate}</Text>
-                                <Text textStyle='p'>статус (в обществе): {selectedItem?.status}</Text>
+                                <Text textStyle='p'>дата переезда: {selectedItem?.dateOfDeparture}</Text>
+                                <Text textStyle='p'>статус (в обществе): {selectedItem?.socialStatus}</Text>
                                 <Text textStyle='p'>почта: {selectedItem?.email}</Text>
-                                <Text textStyle='p'>телефон: {selectedItem?.tel}</Text>
-                                <Text textStyle='p'>кол-во взрослых в семье: {selectedItem?.adults}</Text>
-                                <Text textStyle='p'>кол-во инвалидов: {selectedItem?.disabled}</Text>
-                                <Text textStyle='p'>кол-во пенсионеров: {selectedItem?.pensioners}</Text>
-                                <Text textStyle='p'>кол-во беременных: {selectedItem?.pregnant}</Text>
-                                <Text textStyle='p'>кол-во до 18: {selectedItem?.teens}</Text>
+                                <Text textStyle='p'>телефон: {selectedItem?.phone}</Text>
+                                <Text textStyle='p'>кол-во взрослых в семье: {selectedItem?.numberOfAdults}</Text>
+                                <Text textStyle='p'>кол-во инвалидов: {selectedItem?.numberOfDisabled}</Text>
+                                <Text textStyle='p'>кол-во пенсионеров: {selectedItem?.numberOfOld}</Text>
+                                <Text textStyle='p'>кол-во беременных: {selectedItem?.numberOfPregnant}</Text>
+                                <Text textStyle='p'>кол-во до 18: {selectedItem?.numberOfChildren}</Text>
                                 <Text textStyle='p'>описание ситуации: {selectedItem?.description}</Text>
                             </VStack> 
                         )}
 
                         {buttonSelected === 'Неверефицированные' && (
                             <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='55vh' overflowY='auto'>
-                                <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
-                                <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
                                 <Text textStyle='p'>фамилия: {selectedItem?.lastName}</Text>
                                 <Text textStyle='p'>имя: {selectedItem?.firstName}</Text>
                                 <Text textStyle='p'>возраст: {selectedItem?.age}</Text>
-                                <Text textStyle='p'>семейный статус: {selectedItem?.family}</Text>
+                                <Text textStyle='p'>семейный статус: {selectedItem?.maritalStatus}</Text>
                                 <Text textStyle='p'>адрес проживания: {selectedItem?.geo}</Text>
                                 <Text textStyle='p'>откуда приехал: {selectedItem?.geoFrom}</Text>
-                                <Text textStyle='p'>дата переезда: {selectedItem?.arrivalDate}</Text>
-                                <Text textStyle='p'>статус (в обществе): {selectedItem?.status}</Text>
+                                <Text textStyle='p'>дата переезда: {selectedItem?.dateOfDeparture}</Text>
+                                <Text textStyle='p'>статус (в обществе): {selectedItem?.socialStatus}</Text>
                                 <Text textStyle='p'>почта: {selectedItem?.email}</Text>
-                                <Text textStyle='p'>телефон: {selectedItem?.tel}</Text>
+                                <Text textStyle='p'>телефон: {selectedItem?.phone}</Text>
                             </VStack> 
                         )}
 
-                        {buttonSelected === 'Заявки' && (
+                        {/* {buttonSelected === 'Заявки' && (
                             <VStack pt={12} pl={8} pr={8}  spacing={2} alignItems='flex-start' maxH='45vh' overflowY='auto'>
                                 <Text textStyle='p'>id заявки: {selectedItem?.id}</Text>
                                 <Text textStyle='p'>id пользователя: {selectedItem?.userId}</Text>
@@ -352,7 +335,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                 <Text textStyle='p'>кол-во до 18: {selectedItem?.teens}</Text>
                                 <Text textStyle='p'>описание ситуации: {selectedItem?.description}</Text>
                             </VStack> 
-                        )}
+                        )} */}
 
                         {/* Кнопки принять/отклонить, не отображаются если не заявка */}
                         {buttonSelected === 'Заявки' && (
@@ -398,7 +381,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                             </>
                         )}
                         
-                        {/* Текст со статусом заявки */}
+                        {/* Текст со статусом заявки
                         {buttonSelected === 'Заявки' && (
                             <>
                                 {!openDeni && (
@@ -412,7 +395,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                     </Text>
                                 )}
                             </>
-                        )}
+                        )} */}
                     </Box>
                 )}
             </Box>
