@@ -42,7 +42,7 @@ const LoginPage:FC<ILoginPageProps> = () => {
         formState: { errors },
     } = useForm<IFormInput>();
 
-    const fiveMinutes = 5 / (24 * 60);
+    const fiveMinutes = 2;
 
     const onSubmit: SubmitHandler<IFormInput> = async (values) => {
         setIsLoading(true); // Включаем индикатор загрузки

@@ -117,7 +117,7 @@ const VoulonteeUsersPage:FC<IVoulonteeUsersPageProps> = () => {
 
         await approveAttemtBack(id)
 
-        alert(`заявка принята, но осталась в списке, потому что бек так решил! id заявки: ${id}`)
+        alert(`заявка принята! id заявки: ${id}`)
 
         setIsloading(false);
 

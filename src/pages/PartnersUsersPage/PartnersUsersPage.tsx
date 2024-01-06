@@ -56,18 +56,18 @@ const PartnersUsersPage:FC<IPartnersUsersPageProps> = () => {
 
     const getPartnerVerificationAttemptsFromBack = async () => {
         const resp = await getPartnerVerificationAttempts(token)
-
+        console.log('ВОЛОНТЕРЫ',resp)
         if (resp.status === 200) {
-            console.log('Респонс волонтеров', resp.data)
+            console.log('Респонс волонтеров', resp)
             setData(resp.data)
         }  
     }
 
     const getPartnersFromBack = async () => {
         const resp = await getPartners(token)
-
+        console.log('ВОЛОНТЕРЫ',resp)
         if (resp.status === 200) {
-            console.log('ВОЛОНТЕРЫ',resp.data)
+            console.log('ВОЛОНТЕРЫ',resp)
             setData(resp.data)
         }
         
