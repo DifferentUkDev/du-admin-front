@@ -69,6 +69,8 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
             // setBlagoTaskFromBack(resp.data)
             setData(resp.data)
 
+        } else {
+            setData([])
         }
     }
 
