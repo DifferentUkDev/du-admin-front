@@ -17,7 +17,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
     const [data, setData] = useState<any[]>()
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<{
-        uuid?:string,
+        userId?:string,
         age?: number,
         createdAt?: string,
         dateOfDeparture?: string,
@@ -364,7 +364,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                                 bottom={10}
                                                 left={8}
                                             >
-                                                <Button bg='green.500' color='white' onClick={() => acceptTask(selectedItem.uuid)}>Принять</Button>
+                                                <Button bg='green.500' color='white' onClick={() => acceptTask(selectedItem.userId)}>Принять</Button>
                                                 <Button bg='tomato' color='white'  onClick={() => setOpenDeni(true)}>Отклонить</Button>
                                             </ButtonGroup>
                                         ) : (
@@ -376,7 +376,7 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                                 w='100%'
                                             >
                                                 <Input placeholder="Введите комментарий" onChange={(e) => setCommentTask(e.target.value)} value={commentTask} />
-                                                <Button bg='tomato' color='white' onClick={() => handleDeniTask(selectedItem.uuid)}>Отправить</Button>
+                                                <Button bg='tomato' color='white' onClick={() => handleDeniTask(selectedItem.userId)}>Отправить</Button>
                                                 <IconButton
                                                     aria-label="Очистить"
                                                     icon={<CloseIcon />}
