@@ -2,11 +2,12 @@
 import { getBeneficiaries } from "@/api/getUsers";
 import MainLayout from "@/layouts/MainLayout/MainLayout";
 import { CloseIcon } from "@chakra-ui/icons";
-import { Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack, Image, Modal, ModalOverlay, ModalContent, ModalCloseButton } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { getBeneficiaryVerificationAttempts } from "@/api/getTasks";
 import { approveBeneficiaryVerificationAttempt, rejectBeneficiaryVerificationAttempt } from "@/api/blagoTask";
+import { convertFilePathToUrl } from "@/utils/convertFileUrl";
 
 interface IBlagoUsersPageProps {
 
@@ -39,10 +40,19 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
         phone?: string,
         socialStatus?: number,
         verifiedPic?: string,
+        files?: string[],
     }>({});
     const [commentTask, setCommentTask] = useState<string>('');
     const [openDeni, setOpenDeni] = useState<boolean>(false);
     const [isLoading, setIsloading] = useState<boolean>(false);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const handleImageClick = (image) => {
+        setSelectedImage(image);
+        setIsModalOpen(true);
+    };
     
     const token = Cookies.get('token')
     
@@ -303,6 +313,17 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                 <Text textStyle='p'>кол-во беременных: {selectedItem?.numberOfPregnant}</Text>
                                 <Text textStyle='p'>кол-во до 18: {selectedItem?.numberOfChildren}</Text>
                                 <Text textStyle='p'>описание ситуации: {selectedItem?.description}</Text>
+                                <HStack maxW='100%' mt={2}>
+                                    {selectedItem.files &&  selectedItem.files.map((item) => (
+                                        <Image 
+                                            w='40' 
+                                            h='auto' 
+                                            src={convertFilePathToUrl(item)} 
+                                            cursor='pointer'
+                                            onClick={() => handleImageClick(convertFilePathToUrl(item))}
+                                        />
+                                    ))}
+                                </HStack>
                             </VStack> 
                         )}
 
@@ -342,6 +363,17 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                 <Text textStyle='p'>кол-во беременных: {selectedItem.numberOfPregnant}</Text>
                                 <Text textStyle='p'>кол-во до 18: {selectedItem.numberOfChildren}</Text>
                                 <Text textStyle='p'>описание ситуации: {selectedItem.description}</Text>
+                                <HStack maxW='100%' mt={2}>
+                                    {selectedItem.files &&  selectedItem.files.map((item) => (
+                                        <Image 
+                                            w='40' 
+                                            h='auto' 
+                                            src={convertFilePathToUrl(item)} 
+                                            cursor='pointer'
+                                            onClick={() => handleImageClick(convertFilePathToUrl(item))}
+                                        />
+                                    ))}
+                                </HStack>
                             </VStack> 
                         )}
 
@@ -406,6 +438,13 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                         )} */}
                     </Box>
                 )}
+                <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size='full' isCentered>
+                    <ModalOverlay />
+                    <ModalContent bg='black' m={0} p={0}>
+                    <ModalCloseButton color='white' />
+                    <Image src={selectedImage ? selectedImage : ''} maxW='100%' maxH='100vh' m='auto' />
+                    </ModalContent>
+                </Modal>
             </Box>
         </MainLayout>
         
