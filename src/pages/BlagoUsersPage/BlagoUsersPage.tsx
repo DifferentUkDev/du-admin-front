@@ -2,12 +2,13 @@
 import { getBeneficiaries } from "@/api/getUsers";
 import MainLayout from "@/layouts/MainLayout/MainLayout";
 import { CloseIcon } from "@chakra-ui/icons";
-import { Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack, Image, Modal, ModalOverlay, ModalContent, ModalCloseButton } from "@chakra-ui/react";
+import { Badge, Box, Button, ButtonGroup, HStack, IconButton, Input, Spinner, Text, VStack, Image, Modal, ModalOverlay, ModalContent, ModalCloseButton } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { getBeneficiaryVerificationAttempts } from "@/api/getTasks";
 import { approveBeneficiaryVerificationAttempt, rejectBeneficiaryVerificationAttempt } from "@/api/blagoTask";
 import { convertFilePathToUrl } from "@/utils/convertFileUrl";
+import { colorBadge, status } from "@/utils/status";
 
 interface IBlagoUsersPageProps {
 
@@ -275,7 +276,15 @@ const BlagoUsersPage:FC<IBlagoUsersPageProps> = () => {
                                 >
                                     <Text textStyle='p'>{item.lastName} {item.firstName}</Text>
                                     <Text textStyle='p'>{item.email}</Text>
-                                    <Text textStyle='p'>{!item.isVerified && 'Новая'}</Text>
+                                    <Badge 
+                                        colorScheme={colorBadge(item.status)} 
+                                        mr='3' 
+                                        fontSize='md' 
+                                        borderRadius='5px' 
+                                        textTransform='lowercase'
+                                    >
+                                        {status(item.status)}
+                                    </Badge>
                                 </HStack>
                             ))}
                         </>
